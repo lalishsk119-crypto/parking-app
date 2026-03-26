@@ -25,11 +25,6 @@ const bookingSchema = new mongoose.Schema({
 
 const Booking = mongoose.model('Booking', bookingSchema);
 
-// ✅ Test route
-app.get('/', (req, res) => {
-    res.send("API is working 🚀");
-});
-
 // ✅ Book slot (WITH DOUBLE BOOKING PREVENTION)
 app.post('/book-slot', async (req, res) => {
     try {
@@ -41,7 +36,6 @@ app.post('/book-slot', async (req, res) => {
             });
         }
 
-        // 🔥 Check if already booked
         const existing = await Booking.findOne({ slotNumber });
 
         if (existing) {
@@ -66,11 +60,11 @@ app.post('/book-slot', async (req, res) => {
     }
 });
 
-// ✅ Get all bookings
+// ✅ Get all bookings (VERY IMPORTANT - MUST RETURN ARRAY)
 app.get('/get-bookings', async (req, res) => {
     try {
         const bookings = await Booking.find();
-        res.json(bookings);
+        res.json(bookings); // ✅ correct
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -92,7 +86,9 @@ app.delete('/cancel-slot/:slotNumber', async (req, res) => {
     }
 });
 
-// ✅ Start server
-app.listen(5000, () => {
-    console.log("🚀 Server running on http://localhost:5000");
+// ✅ IMPORTANT: USE RENDER PORT
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
 });
