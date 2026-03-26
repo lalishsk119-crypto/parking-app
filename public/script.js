@@ -1,7 +1,7 @@
 // 🔄 Load all slots + stats
 async function loadSlots() {
     try {
-        const res = await fetch('http://localhost:5000/get-bookings');
+        const res = await fetch('/get-bookings'); // ✅ FIXED
         const bookings = await res.json();
 
         const slots = document.querySelectorAll(".slot");
@@ -48,7 +48,7 @@ async function bookSlot(slotNumber) {
     if (!user) return;
 
     try {
-        const res = await fetch('http://localhost:5000/book-slot', {
+        const res = await fetch('/book-slot', { // ✅ FIXED
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ slotNumber, user })
@@ -58,7 +58,7 @@ async function bookSlot(slotNumber) {
 
         alert(data.message);
 
-        loadSlots(); // refresh
+        loadSlots();
 
     } catch (error) {
         console.log("Booking error:", error);
@@ -71,7 +71,7 @@ async function cancelSlot(slotNumber) {
     if (!confirmCancel) return;
 
     try {
-        const res = await fetch(`http://localhost:5000/cancel-slot/${slotNumber}`, {
+        const res = await fetch(`/cancel-slot/${slotNumber}`, { // ✅ FIXED
             method: 'DELETE'
         });
 
@@ -79,7 +79,7 @@ async function cancelSlot(slotNumber) {
 
         alert(data.message);
 
-        loadSlots(); // refresh
+        loadSlots();
 
     } catch (error) {
         console.log("Cancel error:", error);
