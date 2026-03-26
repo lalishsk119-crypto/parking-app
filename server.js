@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ✅ MongoDB Connection
-mongoose.connect('mongodb://localhost:27017/parkingDB')
+mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("✅ MongoDB Connected"))
 .catch(err => console.log("❌ MongoDB Error:", err));
 
