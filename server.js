@@ -17,14 +17,9 @@ mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("✅ MongoDB Connected"))
 .catch(err => console.log("❌ MongoDB Error:", err));
 
-// ✅ Schema
-const bookingSchema = new mongoose.Schema({
-    slotNumber: String,
-    user: String
-});
-
-const Booking = mongoose.model('Booking', bookingSchema);
-// ✅ User Schema
+/* =========================
+   🔐 USER MODEL
+========================= */
 const userSchema = new mongoose.Schema({
     username: String,
     password: String
@@ -32,95 +27,121 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-// ✅ Book slot (WITH DOUBLE BOOKING PREVENTION)
+/* =========================
+   🚗 BOOKING MODEL
+========================= */
+const bookingSchema = new mongoose.Schema({
+    slotNumber: String,
+    user: String
+});
+
+const Booking = mongoose.model('Booking', bookingSchema);
+
+/* =========================
+   📝 SIGNUP
+========================= */
+app.post('/signup', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        if (!username || !password) {
+            return res.json({ message: "Username & password required ❌" });
+        }
+
+        const existing = await User.findOne({ username });
+
+        if (existing) {
+            return res.json({ message: "User already exists ❌" });
+        }
+
+        const newUser = new User({ username, password });
+        await newUser.save();
+
+        res.json({ message: "Signup successful ✅", user: newUser });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+/* =========================
+   🔐 LOGIN
+========================= */
+app.post('/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        const user = await User.findOne({ username, password });
+
+        if (!user) {
+            return res.json({ message: "Invalid credentials ❌" });
+        }
+
+        res.json({ message: "Login successful ✅", user });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+/* =========================
+   🚗 BOOK SLOT
+========================= */
 app.post('/book-slot', async (req, res) => {
     try {
         const { slotNumber, user } = req.body;
 
         if (!slotNumber || !user) {
-            return res.status(400).json({
-                message: "slotNumber and user required"
-            });
+            return res.json({ message: "slotNumber & user required ❌" });
         }
 
         const existing = await Booking.findOne({ slotNumber });
 
         if (existing) {
-            return res.status(400).json({
-                message: "❌ Slot already booked!"
-            });
+            return res.json({ message: "❌ Slot already booked!" });
         }
 
         const newBooking = new Booking({ slotNumber, user });
         await newBooking.save();
 
-        res.json({
-            message: "Slot booked successfully ✅",
-            data: newBooking
-        });
+        res.json({ message: "Slot booked successfully ✅" });
 
     } catch (error) {
-        res.status(500).json({
-            message: "Error booking slot",
-            error: error.message
-        });
+        res.status(500).json({ message: error.message });
     }
 });
-// ✅ Signup
-app.post('/signup', async (req, res) => {
-    const { username, password } = req.body;
 
-    const existing = await User.findOne({ username });
-
-    if (existing) {
-        return res.json({ message: "User already exists ❌" });
-    }
-
-    const user = new User({ username, password });
-    await user.save();
-
-    res.json({ message: "Signup successful ✅" });
-});
-
-// ✅ Login
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-
-    const user = await User.findOne({ username, password });
-
-    if (!user) {
-        return res.json({ message: "Invalid credentials ❌" });
-    }
-
-    res.json({ message: "Login successful ✅", user });
-});
-// ✅ Get all bookings (VERY IMPORTANT - MUST RETURN ARRAY)
+/* =========================
+   📦 GET BOOKINGS
+========================= */
 app.get('/get-bookings', async (req, res) => {
     try {
         const bookings = await Booking.find();
-        res.json(bookings); // ✅ correct
+        res.json(bookings);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// ✅ Cancel booking
+/* =========================
+   ❌ CANCEL SLOT
+========================= */
 app.delete('/cancel-slot/:slotNumber', async (req, res) => {
     try {
         const { slotNumber } = req.params;
 
         await Booking.deleteOne({ slotNumber });
 
-        res.json({
-            message: "Booking cancelled ❌"
-        });
+        res.json({ message: "Booking cancelled ❌" });
 
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// ✅ IMPORTANT: USE RENDER PORT
+/* =========================
+   🚀 START SERVER
+========================= */
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
