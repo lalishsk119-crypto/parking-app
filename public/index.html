@@ -31,12 +31,23 @@
             font-weight: bold;
             cursor: pointer;
         }
+
+        .top-bar {
+            margin-top: 10px;
+        }
     </style>
 </head>
 
 <body>
 
 <h1>🚗 Parking Slots</h1>
+
+<!-- 🔐 USER + LOGOUT -->
+<div class="top-bar">
+    <span id="userDisplay"></span>
+    <button onclick="logout()">Logout</button>
+</div>
+
 <h2 id="stats">Loading...</h2>
 
 <div class="parking-container">
@@ -48,8 +59,25 @@
     <div class="slot" data-slot="B3">B3</div>
 </div>
 
-<!-- ✅ IMPORTANT: FORCE LOAD NEW JS -->
-<script src="script.js?v=2"></script>
+<script>
+    // 🔐 Show logged-in user
+    const user = localStorage.getItem("user");
+
+    if (!user) {
+        window.location.href = "/login.html";
+    } else {
+        document.getElementById("userDisplay").innerText = "👤 " + user;
+    }
+
+    // 🔐 Logout function
+    function logout() {
+        localStorage.removeItem("user");
+        window.location.href = "/login.html";
+    }
+</script>
+
+<!-- ✅ Load main script -->
+<script src="script.js?v=3"></script>
 
 </body>
 </html>

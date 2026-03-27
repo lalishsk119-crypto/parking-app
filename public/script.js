@@ -1,7 +1,7 @@
 // 🔄 Load all slots + stats
 async function loadSlots() {
     try {
-        const res = await fetch('/get-bookings'); // ✅ FIXED
+        const res = await fetch('/get-bookings');
         const bookings = await res.json();
 
         const slots = document.querySelectorAll(".slot");
@@ -44,11 +44,17 @@ async function loadSlots() {
 
 // 🚗 Book slot
 async function bookSlot(slotNumber) {
-    const user = prompt("Enter your name:");
-    if (!user) return;
+    const user = localStorage.getItem("user");
+
+    // 🔐 Check login
+    if (!user) {
+        alert("Please login first!");
+        window.location.href = "/login.html";
+        return;
+    }
 
     try {
-        const res = await fetch('/book-slot', { // ✅ FIXED
+        const res = await fetch('/book-slot', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ slotNumber, user })
@@ -58,7 +64,7 @@ async function bookSlot(slotNumber) {
 
         alert(data.message);
 
-        loadSlots();
+        loadSlots(); // refresh
 
     } catch (error) {
         console.log("Booking error:", error);
@@ -71,7 +77,7 @@ async function cancelSlot(slotNumber) {
     if (!confirmCancel) return;
 
     try {
-        const res = await fetch(`/cancel-slot/${slotNumber}`, { // ✅ FIXED
+        const res = await fetch(`/cancel-slot/${slotNumber}`, {
             method: 'DELETE'
         });
 
@@ -79,7 +85,7 @@ async function cancelSlot(slotNumber) {
 
         alert(data.message);
 
-        loadSlots();
+        loadSlots(); // refresh
 
     } catch (error) {
         console.log("Cancel error:", error);

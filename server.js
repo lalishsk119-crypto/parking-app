@@ -24,6 +24,13 @@ const bookingSchema = new mongoose.Schema({
 });
 
 const Booking = mongoose.model('Booking', bookingSchema);
+// ✅ User Schema
+const userSchema = new mongoose.Schema({
+    username: String,
+    password: String
+});
+
+const User = mongoose.model('User', userSchema);
 
 // ✅ Book slot (WITH DOUBLE BOOKING PREVENTION)
 app.post('/book-slot', async (req, res) => {
@@ -59,7 +66,34 @@ app.post('/book-slot', async (req, res) => {
         });
     }
 });
+// ✅ Signup
+app.post('/signup', async (req, res) => {
+    const { username, password } = req.body;
 
+    const existing = await User.findOne({ username });
+
+    if (existing) {
+        return res.json({ message: "User already exists ❌" });
+    }
+
+    const user = new User({ username, password });
+    await user.save();
+
+    res.json({ message: "Signup successful ✅" });
+});
+
+// ✅ Login
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    const user = await User.findOne({ username, password });
+
+    if (!user) {
+        return res.json({ message: "Invalid credentials ❌" });
+    }
+
+    res.json({ message: "Login successful ✅", user });
+});
 // ✅ Get all bookings (VERY IMPORTANT - MUST RETURN ARRAY)
 app.get('/get-bookings', async (req, res) => {
     try {
