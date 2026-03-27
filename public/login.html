@@ -1,9 +1,66 @@
-<h2>Login</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
 
-<input id="username" placeholder="Username">
-<input id="password" type="password" placeholder="Password">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-<button onclick="login()">Login</button>
+        .login-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-card">
+    <h2>🔐 Login</h2>
+
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+</div>
 
 <script>
 async function login() {
@@ -26,3 +83,6 @@ async function login() {
     }
 }
 </script>
+
+</body>
+</html>
