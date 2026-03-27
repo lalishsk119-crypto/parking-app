@@ -16,7 +16,8 @@ async function loadSlots() {
 
             if (booking) {
                 // 🔴 Booked
-                slotDiv.style.backgroundColor = "red";
+                slotDiv.classList.remove("available");
+                slotDiv.classList.add("booked");
                 slotDiv.innerText = `${slot} (${booking.user})`;
 
                 slotDiv.onclick = () => cancelSlot(slot);
@@ -24,7 +25,8 @@ async function loadSlots() {
                 bookedCount++;
             } else {
                 // 🟢 Available
-                slotDiv.style.backgroundColor = "green";
+                slotDiv.classList.remove("booked");
+                slotDiv.classList.add("available");
                 slotDiv.innerText = slot;
 
                 slotDiv.onclick = () => bookSlot(slot);
