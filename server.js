@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -62,7 +63,12 @@ app.post('/signup', async (req, res) => {
             return res.json({ message: "User already exists ❌" });
         }
 
-        const newUser = new User({ username, password });
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+const newUser = new User({
+    username,
+    password: hashedPassword
+});
         await newUser.save();
 
         res.json({ message: "Signup successful ✅", user: newUser });
@@ -79,7 +85,17 @@ app.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        const user = await User.findOne({ username, password });
+        const user = await User.findOne({ username });
+
+if (!user) {
+    return res.json({ message: "Invalid credentials ❌" });
+}
+
+const isMatch = await bcrypt.compare(password, user.password);
+
+if (!isMatch) {
+    return res.json({ message: "Invalid credentials ❌" });
+}
 
         if (!user) {
             return res.json({ message: "Invalid credentials ❌" });
