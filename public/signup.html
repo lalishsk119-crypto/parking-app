@@ -23,6 +23,10 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
+        h2 {
+            margin-bottom: 20px;
+        }
+
         input {
             width: 100%;
             padding: 10px;
@@ -40,6 +44,20 @@
             border-radius: 8px;
             cursor: pointer;
         }
+
+        button:hover {
+            background: #2fb58c;
+        }
+
+        .link {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        a {
+            color: #185a9d;
+            text-decoration: none;
+        }
     </style>
 </head>
 
@@ -52,25 +70,44 @@
     <input id="password" type="password" placeholder="Password">
 
     <button onclick="signup()">Create Account</button>
+
+    <!-- 🔗 LOGIN LINK -->
+    <p class="link">
+        Already have an account? 
+        <a href="/login.html">Login</a>
+    </p>
 </div>
 
 <script>
 async function signup() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
 
-    const res = await fetch('/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-    });
+    // 🚨 validation
+    if (!username || !password) {
+        alert("Please fill all fields ❌");
+        return;
+    }
 
-    const data = await res.json();
+    try {
+        const res = await fetch('/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
 
-    alert(data.message);
+        const data = await res.json();
 
-    if (data.user) {
-        window.location.href = "/login.html";
+        alert(data.message);
+
+        // ✅ redirect on success
+        if (data.user || data.message.includes("successful")) {
+            window.location.href = "/login.html";
+        }
+
+    } catch (error) {
+        alert("Signup failed ❌");
+        console.log(error);
     }
 }
 </script>
