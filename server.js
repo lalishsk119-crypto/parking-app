@@ -22,7 +22,7 @@ mongoose.connect(process.env.MONGO_URI)
    🔐 USER MODEL
 ========================= */
 const userSchema = new mongoose.Schema({
-    username: String,
+    username: { type: String, unique: true },
     password: String
 });
 
@@ -37,11 +37,9 @@ const bookingSchema = new mongoose.Schema({
     bookedAt: {
         type: Date,
         default: Date.now
-    },
-    status: {
-        type: String,
-        default: "booked"
     }
+    // OPTIONAL AUTO DELETE 👇
+    // expires: 600 // 10 minutes
 });
 
 const Booking = mongoose.model('Booking', bookingSchema);
@@ -58,20 +56,20 @@ app.post('/signup', async (req, res) => {
         }
 
         const existing = await User.findOne({ username });
-
         if (existing) {
             return res.json({ message: "User already exists ❌" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-const newUser = new User({
-    username,
-    password: hashedPassword
-});
+        const newUser = new User({
+            username,
+            password: hashedPassword
+        });
+
         await newUser.save();
 
-        res.json({ message: "Signup successful ✅", user: newUser });
+        res.json({ message: "Signup successful ✅" });
 
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -87,17 +85,13 @@ app.post('/login', async (req, res) => {
 
         const user = await User.findOne({ username });
 
-if (!user) {
-    return res.json({ message: "Invalid credentials ❌" });
-}
-
-const isMatch = await bcrypt.compare(password, user.password);
-
-if (!isMatch) {
-    return res.json({ message: "Invalid credentials ❌" });
-}
-
         if (!user) {
+            return res.json({ message: "Invalid credentials ❌" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
             return res.json({ message: "Invalid credentials ❌" });
         }
 

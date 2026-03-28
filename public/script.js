@@ -1,4 +1,4 @@
-// 🔄 Load all slots + stats
+// 🔄 Load slots
 async function loadSlots() {
     try {
         const res = await fetch('/get-bookings');
@@ -15,86 +15,68 @@ async function loadSlots() {
             const booking = bookings.find(b => b.slotNumber === slot);
 
             if (booking) {
-                // 🔴 Booked
                 slotDiv.classList.remove("available");
                 slotDiv.classList.add("booked");
+
                 const time = new Date(booking.bookedAt).toLocaleTimeString();
 
                 slotDiv.innerText = `${slot}\n${booking.user}\n${time}`;
-
                 slotDiv.onclick = () => cancelSlot(slot);
 
                 bookedCount++;
             } else {
-                // 🟢 Available
                 slotDiv.classList.remove("booked");
                 slotDiv.classList.add("available");
-                slotDiv.innerText = slot;
 
+                slotDiv.innerText = slot;
                 slotDiv.onclick = () => bookSlot(slot);
             }
         });
 
-        // 📊 Update stats
         const available = total - bookedCount;
 
         document.getElementById("stats").innerText =
             `Total: ${total} | Available: ${available} | Booked: ${bookedCount}`;
 
     } catch (error) {
-        console.log("Error loading slots:", error);
+        console.log("Error:", error);
     }
 }
 
-// 🚗 Book slot
+// 🚗 Book
 async function bookSlot(slotNumber) {
     const user = localStorage.getItem("user");
 
-    // 🔐 Check login
     if (!user) {
-        alert("Please login first!");
+        alert("Login first!");
         window.location.href = "/login.html";
         return;
     }
 
-    try {
-        const res = await fetch('/book-slot', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ slotNumber, user })
-        });
+    const res = await fetch('/book-slot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slotNumber, user })
+    });
 
-        const data = await res.json();
+    const data = await res.json();
 
-        alert(data.message);
-
-        loadSlots(); // refresh
-
-    } catch (error) {
-        console.log("Booking error:", error);
-    }
+    alert(data.message);
+    loadSlots();
 }
 
-// ❌ Cancel slot
+// ❌ Cancel
 async function cancelSlot(slotNumber) {
-    const confirmCancel = confirm("Cancel booking?");
-    if (!confirmCancel) return;
+    if (!confirm("Cancel booking?")) return;
 
-    try {
-        const res = await fetch(`/cancel-slot/${slotNumber}`, {
-            method: 'DELETE'
-        });
+    const res = await fetch(`/cancel-slot/${slotNumber}`, {
+        method: 'DELETE'
+    });
 
-        const data = await res.json();
+    const data = await res.json();
 
-        alert(data.message);
-
-        loadSlots(); // refresh
-
-    } catch (error) {
-        console.log("Cancel error:", error);
-    }
+    alert(data.message);
+    loadSlots();
 }
 
-// 🚀 Load when page opens
 window.onload = loadSlots;
