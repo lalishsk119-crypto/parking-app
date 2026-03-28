@@ -18,7 +18,9 @@ async function loadSlots() {
                 // 🔴 Booked
                 slotDiv.classList.remove("available");
                 slotDiv.classList.add("booked");
-                slotDiv.innerText = `${slot} (${booking.user})`;
+                const time = new Date(booking.bookedAt).toLocaleTimeString();
+
+                slotDiv.innerText = `${slot}\n${booking.user}\n${time}`;
 
                 slotDiv.onclick = () => cancelSlot(slot);
 

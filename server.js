@@ -32,7 +32,15 @@ const User = mongoose.model('User', userSchema);
 ========================= */
 const bookingSchema = new mongoose.Schema({
     slotNumber: String,
-    user: String
+    user: String,
+    bookedAt: {
+        type: Date,
+        default: Date.now
+    },
+    status: {
+        type: String,
+        default: "booked"
+    }
 });
 
 const Booking = mongoose.model('Booking', bookingSchema);
