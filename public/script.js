@@ -1,3 +1,16 @@
+function getLocation() {
+    navigator.geolocation.getCurrentPosition(position => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        console.log("User Location:", lat, lon);
+
+        document.getElementById("ai").innerText =
+            "📍 You are near Main Gate → Suggested: Zone A";
+    });
+}
+
+getLocation();
 function predictBusy() {
     const hour = new Date().getHours();
 
