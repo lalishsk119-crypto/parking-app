@@ -1,33 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Parking App v2</title>
+    <title>Smart Parking System</title>
 
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
             text-align: center;
-            background: linear-gradient(135deg, #eef2f7, #dbe4f0);
-            margin: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
         }
 
         h1 {
             margin-top: 20px;
-            color: #333;
         }
 
-        /* 🔐 Top bar */
         .top-bar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
             margin-top: 10px;
-        }
-
-        #userDisplay {
-            font-weight: bold;
-            color: #444;
         }
 
         button {
@@ -35,85 +24,65 @@
             border: none;
             background: #ff4d4d;
             color: white;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: 0.3s;
         }
 
-        button:hover {
-            background: #e60000;
-            transform: scale(1.05);
-        }
-
-        /* 📊 Stats */
-        #stats {
-            margin-top: 15px;
+        .stats-box {
+            margin: 20px;
             font-size: 18px;
-            color: #222;
         }
 
-        /* 🚗 Grid */
         .parking-container {
             display: grid;
-            grid-template-columns: repeat(3, 130px);
+            grid-template-columns: repeat(3, 140px);
             gap: 25px;
             justify-content: center;
-            margin-top: 40px;
+            margin-top: 30px;
         }
 
-        /* 🧱 Slot */
         .slot {
-            width: 130px;
-            height: 130px;
+            width: 140px;
+            height: 140px;
             border-radius: 15px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
             font-weight: bold;
-            font-size: 14px;
             cursor: pointer;
             transition: 0.3s;
-            color: white;
-            white-space: pre-line;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        /* 🟢 Available */
-        .slot.available {
-            background: linear-gradient(135deg, #28a745, #4cd964);
+        .available {
+            background: #28a745;
         }
 
-        /* 🔴 Booked */
-        .slot.booked {
-            background: linear-gradient(135deg, #dc3545, #ff6b6b);
+        .booked {
+            background: #dc3545;
         }
 
-        /* ✨ Hover */
         .slot:hover {
             transform: scale(1.1);
         }
 
-        /* 📱 Responsive */
-        @media (max-width: 500px) {
-            .parking-container {
-                grid-template-columns: repeat(2, 120px);
-            }
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            opacity: 0.8;
         }
     </style>
 </head>
 
 <body>
 
-<h1>🚗 Parking Slots</h1>
+<h1>🚗 Smart Parking System</h1>
 
-<!-- 🔐 USER + LOGOUT -->
 <div class="top-bar">
     <span id="userDisplay"></span>
     <button onclick="logout()">Logout</button>
 </div>
 
-<h2 id="stats">Loading...</h2>
+<div class="stats-box" id="stats">Loading...</div>
 
 <div class="parking-container">
     <div class="slot" data-slot="A1">A1</div>
@@ -124,25 +93,26 @@
     <div class="slot" data-slot="B3">B3</div>
 </div>
 
+<div class="footer">
+    ⚡ Auto Parking | Smart Booking | Real-time Slots
+</div>
+
 <script>
-    // 🔐 Check login
-    const user = localStorage.getItem("user");
+const user = localStorage.getItem("user");
 
-    if (!user) {
-        window.location.href = "/login.html";
-    } else {
-        document.getElementById("userDisplay").innerText = "👤 " + user;
-    }
+if (!user) {
+    window.location.href = "/login.html";
+} else {
+    document.getElementById("userDisplay").innerText = "👤 " + user;
+}
 
-    // 🔐 Logout
-    function logout() {
-        localStorage.removeItem("user");
-        window.location.href = "/login.html";
-    }
+function logout() {
+    localStorage.removeItem("user");
+    window.location.href = "/login.html";
+}
 </script>
 
-<!-- ✅ Force latest JS -->
-<script src="script.js?v=10"></script>
+<script src="script.js?v=99"></script>
 
 </body>
 </html>
