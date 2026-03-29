@@ -1,3 +1,22 @@
+function navigateToParking() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+
+            const userLat = position.coords.latitude;
+            const userLng = position.coords.longitude;
+
+            // 👉 PSG College location (you can change)
+            const destLat = 11.0247;
+            const destLng = 77.0025;
+
+            const url = `https://www.google.com/maps/dir/${userLat},${userLng}/${destLat},${destLng}`;
+
+            window.open(url, '_blank');
+        });
+    } else {
+        alert("Geolocation not supported");
+    }
+}
 function getLocation() {
     navigator.geolocation.getCurrentPosition(position => {
         const lat = position.coords.latitude;
@@ -131,8 +150,10 @@ async function bookSlot(slotNumber) {
     const data = await res.json();
 
     alert(data.message);
+    navigateToParking();
     loadSlots();
 }
+
 
 // ❌ Cancel slot
 async function cancelSlot(slotNumber) {
