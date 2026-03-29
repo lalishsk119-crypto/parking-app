@@ -6,20 +6,17 @@ const path = require('path');
 
 const app = express();
 
-// ✅ Middleware
 app.use(express.json());
 app.use(cors());
-
-// ✅ Serve frontend
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ✅ MongoDB Connection
+// 🔥 MongoDB
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("✅ MongoDB Connected"))
 .catch(err => console.log("❌ MongoDB Error:", err));
 
 /* =========================
-   🔐 USER MODEL
+   USER MODEL
 ========================= */
 const userSchema = new mongoose.Schema({
     username: { type: String, unique: true },
@@ -29,7 +26,7 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 
 /* =========================
-   🚗 BOOKING MODEL
+   BOOKING MODEL
 ========================= */
 const bookingSchema = new mongoose.Schema({
     slotNumber: String,
@@ -38,22 +35,16 @@ const bookingSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-    // OPTIONAL AUTO DELETE 👇
-    // expires: 600 // 10 minutes
 });
 
 const Booking = mongoose.model('Booking', bookingSchema);
 
 /* =========================
-   📝 SIGNUP
+   SIGNUP
 ========================= */
 app.post('/signup', async (req, res) => {
     try {
         const { username, password } = req.body;
-
-        if (!username || !password) {
-            return res.json({ message: "Username & password required ❌" });
-        }
 
         const existing = await User.findOne({ username });
         if (existing) {
@@ -62,106 +53,85 @@ app.post('/signup', async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = new User({
-            username,
-            password: hashedPassword
-        });
-
+        const newUser = new User({ username, password: hashedPassword });
         await newUser.save();
 
         res.json({ message: "Signup successful ✅" });
 
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 });
 
 /* =========================
-   🔐 LOGIN
+   LOGIN
 ========================= */
 app.post('/login', async (req, res) => {
-    try {
-        const { username, password } = req.body;
+    const { username, password } = req.body;
 
-        const user = await User.findOne({ username });
+    const user = await User.findOne({ username });
+    if (!user) return res.json({ message: "Invalid credentials ❌" });
 
-        if (!user) {
-            return res.json({ message: "Invalid credentials ❌" });
-        }
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.json({ message: "Invalid credentials ❌" });
 
-        const isMatch = await bcrypt.compare(password, user.password);
-
-        if (!isMatch) {
-            return res.json({ message: "Invalid credentials ❌" });
-        }
-
-        res.json({ message: "Login successful ✅", user });
-
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    res.json({ message: "Login successful ✅", user });
 });
 
 /* =========================
-   🚗 BOOK SLOT
+   BOOK SLOT
 ========================= */
 app.post('/book-slot', async (req, res) => {
-    try {
-        const { slotNumber, user } = req.body;
+    const { slotNumber, user } = req.body;
 
-        if (!slotNumber || !user) {
-            return res.json({ message: "slotNumber & user required ❌" });
-        }
-
-        const existing = await Booking.findOne({ slotNumber });
-
-        if (existing) {
-            return res.json({ message: "❌ Slot already booked!" });
-        }
-
-        const newBooking = new Booking({ slotNumber, user });
-        await newBooking.save();
-
-        res.json({ message: "Slot booked successfully ✅" });
-
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+    const exists = await Booking.findOne({ slotNumber });
+    if (exists) {
+        return res.json({ message: "Slot already booked ❌" });
     }
+
+    const booking = new Booking({ slotNumber, user });
+    await booking.save();
+
+    res.json({ message: "Booked successfully ✅" });
 });
 
 /* =========================
-   📦 GET BOOKINGS
+   GET BOOKINGS
 ========================= */
 app.get('/get-bookings', async (req, res) => {
-    try {
-        const bookings = await Booking.find();
-        res.json(bookings);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+    const bookings = await Booking.find();
+    res.json(bookings);
 });
 
 /* =========================
-   ❌ CANCEL SLOT
+   CANCEL + BILLING 💰
 ========================= */
 app.delete('/cancel-slot/:slotNumber', async (req, res) => {
-    try {
-        const { slotNumber } = req.params;
+    const { slotNumber } = req.params;
 
-        await Booking.deleteOne({ slotNumber });
+    const booking = await Booking.findOne({ slotNumber });
 
-        res.json({ message: "Booking cancelled ❌" });
-
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    if (!booking) {
+        return res.json({ message: "No booking found" });
     }
+
+    const now = new Date();
+    const hours = Math.ceil((now - booking.bookedAt) / (1000 * 60 * 60));
+
+    const price = hours * 10; // ₹10/hour
+
+    await Booking.deleteOne({ slotNumber });
+
+    res.json({
+        message: `Cancelled ❌ | Parking Fee: ₹${price}`
+    });
 });
 
 /* =========================
-   🚀 START SERVER
+   SERVER
 ========================= */
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`🚀 Running on port ${PORT}`);
 });
