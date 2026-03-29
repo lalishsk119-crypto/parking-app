@@ -97,9 +97,11 @@ button {
 .booked { background: red; }
 
 /* MAP */
-.map {
-    margin-top: 20px;
-    text-align: center;
+#map {
+    height: 300px;
+    width: 90%;
+    margin: auto;
+    border-radius: 10px;
 }
 </style>
 
@@ -147,7 +149,7 @@ button {
     <div class="card"><h3 id="booked">0</h3><p>Booked</p></div>
 </div>
 
-<!-- ZONE PARKING -->
+<!-- ZONES -->
 
 <div class="parking-zones">
 
@@ -182,15 +184,15 @@ button {
 
 </div>
 
-<!-- MAP -->
+<!-- LIVE MAP -->
 
-<div class="map">
-    <iframe width="90%" height="250"
-    src="https://maps.google.com/maps?q=PSG College of Technology&t=&z=15&ie=UTF8&iwloc=&output=embed">
-    </iframe>
-</div>
+<div id="map"></div>
 
 <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+
+<!-- GOOGLE MAP API -->
+
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
 
 <script>
 // USER
@@ -198,28 +200,21 @@ const user = localStorage.getItem("user");
 if (!user) window.location.href = "/login.html";
 else document.getElementById("userDisplay").innerText = "👤 " + user;
 
+// NAV
+function goHome(){ window.location.href="/"; }
+function goHistory(){ window.location.href="/history.html"; }
+function goProfile(){ window.location.href="/profile.html"; }
+
 // LOGOUT
 function logout() {
     localStorage.removeItem("user");
     window.location.href = "/login.html";
 }
 
-// NAV
-function goHome(){ window.location.href="/"; }
-function goHistory(){ window.location.href="/history.html"; }
-function goProfile(){ window.location.href="/profile.html"; }
-
 // CLOCK
 setInterval(() => {
-    document.getElementById("clock").innerText =
-        new Date().toLocaleTimeString();
+    document.getElementById("clock").innerText = new Date().toLocaleTimeString();
 }, 1000);
-
-// LOCATION
-navigator.geolocation.getCurrentPosition(pos => {
-    document.getElementById("ai").innerText =
-        "📍 Near Main Gate → Suggested Zone A";
-});
 
 // SEARCH
 document.getElementById("search").addEventListener("input", function() {
@@ -227,6 +222,48 @@ document.getElementById("search").addEventListener("input", function() {
     document.querySelectorAll(".slot").forEach(s => {
         s.style.display = s.innerText.includes(val) ? "flex" : "none";
     });
+});
+
+// NAVIGATION (GOOGLE MAP ROUTE)
+function navigateToParking() {
+    navigator.geolocation.getCurrentPosition(position => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        const url = `https://www.google.com/maps/dir/${lat},${lng}/11.0247,77.0025`;
+        window.open(url, '_blank');
+    });
+}
+
+// LIVE MAP TRACKING
+let map;
+let marker;
+
+function initMap(lat, lng) {
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat, lng },
+        zoom: 16
+    });
+
+    marker = new google.maps.Marker({
+        position: { lat, lng },
+        map: map
+    });
+}
+
+navigator.geolocation.watchPosition(pos => {
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+
+    if (!map) {
+        initMap(lat, lng);
+    } else {
+        marker.setPosition({ lat, lng });
+        map.setCenter({ lat, lng });
+    }
+
+    document.getElementById("ai").innerText =
+        "📍 Live Location Active → Suggested Zone A";
 });
 </script>
 
