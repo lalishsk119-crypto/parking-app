@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>My Bookings</title>
+</head>
+
+<body>
+
+<h2>📜 My Booking History</h2>
+
+<div id="history"></div>
+
+<script>
+async function loadHistory() {
+    const user = localStorage.getItem("user");
+
+    const res = await fetch('/get-bookings');
+    const bookings = await res.json();
+
+    const my = bookings.filter(b => b.user === user);
+
+    let html = "";
+
+    my.forEach(b => {
+        html += `<p>🚗 ${b.slotNumber} | ${new Date(b.bookedAt).toLocaleString()}</p>`;
+    });
+
+    document.getElementById("history").innerHTML = html || "No bookings";
+}
+
+loadHistory();
+</script>
+
+</body>
+</html>

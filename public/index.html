@@ -95,6 +95,11 @@
 </head>
 
 <body>
+<div class="navbar">
+    <button onclick="goHome()">Home</button>
+    <button onclick="goHistory()">History</button>
+    <button onclick="goProfile()">Profile</button>
+</div>
 
 <!-- 🔥 NAVBAR -->
 <div class="navbar">
@@ -123,12 +128,28 @@
 
 <!-- 🚗 PARKING -->
 <div class="parking">
-    <div class="slot" data-slot="A1">A1</div>
-    <div class="slot" data-slot="A2">A2</div>
-    <div class="slot" data-slot="A3">A3</div>
-    <div class="slot" data-slot="B1">B1</div>
-    <div class="slot" data-slot="B2">B2</div>
-    <div class="slot" data-slot="B3">B3</div>
+
+<!-- ROW A -->
+<div class="slot" data-slot="A1">A1</div>
+<div class="slot" data-slot="A2">A2</div>
+<div class="slot" data-slot="A3">A3</div>
+<div class="slot" data-slot="A4">A4</div>
+<div class="slot" data-slot="A5">A5</div>
+
+<!-- ROW B -->
+<div class="slot" data-slot="B1">B1</div>
+<div class="slot" data-slot="B2">B2</div>
+<div class="slot" data-slot="B3">B3</div>
+<div class="slot" data-slot="B4">B4</div>
+<div class="slot" data-slot="B5">B5</div>
+
+<!-- ROW C -->
+<div class="slot" data-slot="C1">C1</div>
+<div class="slot" data-slot="C2">C2</div>
+<div class="slot" data-slot="C3">C3</div>
+<div class="slot" data-slot="C4">C4</div>
+<div class="slot" data-slot="C5">C5</div>
+
 </div>
 
 <div class="footer">
@@ -148,6 +169,17 @@
         localStorage.removeItem("user");
         window.location.href = "/login.html";
     }
+    function goHome() {
+    window.location.href = "/";
+}
+
+function goHistory() {
+    window.location.href = "/history.html";
+}
+
+function goProfile() {
+    window.location.href = "/profile.html";
+}
 </script>
 
 <script src="script.js?v=FINAL"></script>
