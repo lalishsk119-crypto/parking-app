@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body style="background:black;color:white;text-align:center;">
+
+<h2>📊 Parking Analytics</h2>
+
+<canvas id="chart" width="300" height="300"></canvas>
+
+<script>
+async function loadChart() {
+    const res = await fetch('/get-bookings');
+    const bookings = await res.json();
+
+    let booked = bookings.length;
+    let total = 15;
+    let available = total - booked;
+
+    new Chart(document.getElementById('chart'), {
+        type: 'pie',
+        data: {
+            labels: ['Booked','Available'],
+            datasets: [{
+                data: [booked, available],
+                backgroundColor: ['red','green']
+            }]
+        }
+    });
+}
+
+loadChart();
+</script>
+
+</body>
+</html>

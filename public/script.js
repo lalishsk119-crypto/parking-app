@@ -1,3 +1,10 @@
+function predictBusy() {
+    const hour = new Date().getHours();
+
+    if (hour >= 9 && hour <= 12) return "🔥 Peak Time";
+    if (hour >= 17 && hour <= 20) return "🚗 Evening Rush";
+    return "🟢 Low Traffic";
+}
 // 🧠 Smart Suggestion
 function suggestSlot(bookings) {
     const allSlots = [
@@ -63,6 +70,7 @@ async function loadSlots() {
                 slotDiv.innerText = slot;
 
                 slotDiv.onclick = () => bookSlot(slot);
+                document.getElementById("ai").innerText = predictBusy();
 
                 // 💡 Suggested slot
                 if (slot === suggested) {
