@@ -6,104 +6,158 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+<style>
+
+/* 🌌 GLOBAL */
 body {
     margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #000428, #004e92);
+    font-family: 'Poppins', sans-serif;
+    background: #0f172a;
     color: white;
 }
 
-/* NAVBAR */
+/* 🔥 NAVBAR */
 .navbar {
     display: flex;
     justify-content: space-between;
-    padding: 15px;
-    background: rgba(0,0,0,0.5);
+    padding: 15px 25px;
+    background: #111827;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
 
 button {
-    padding: 8px 12px;
+    background: #ff3b3b;
     border: none;
-    background: #ff4d4d;
+    padding: 8px 14px;
     color: white;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
+    transition: 0.2s;
 }
 
-/* SEARCH */
+button:hover {
+    transform: scale(1.05);
+}
+
+/* 🔍 SEARCH */
 .search-box {
-    text-align: center;
-    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 
 .search-box input {
-    padding: 10px;
-    width: 250px;
-    border-radius: 8px;
+    width: 320px;
+    padding: 12px;
+    border-radius: 10px;
     border: none;
+    background: #1e293b;
+    color: white;
 }
 
-/* INFO */
+/* ⏰ TOP INFO */
 .top-info {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
-/* DASHBOARD */
+/* 📊 DASHBOARD CARDS */
 .dashboard {
     display: flex;
     justify-content: center;
     gap: 20px;
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
 .card {
-    background: rgba(255,255,255,0.1);
-    padding: 15px;
-    border-radius: 12px;
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 15px;
+    width: 120px;
     text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 
-/* ZONES */
+/* 🚗 ZONES */
 .parking-zones {
-    margin-top: 30px;
-    padding: 20px;
+    max-width: 900px;
+    margin: 40px auto;
 }
 
 .zone {
-    background: rgba(255,255,255,0.1);
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 12px;
+    background: #1e293b;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
+.zone h2 {
+    margin-bottom: 15px;
+}
+
+/* 🧱 SLOT GRID */
 .zone-slots {
     display: flex;
     gap: 15px;
 }
 
+/* 🟢🔴 SLOT STYLE */
 .slot {
     height: 100px;
     width: 100px;
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
     cursor: pointer;
+    transition: 0.3s;
 }
 
-.available { background: green; }
-.booked { background: red; }
+.slot:hover {
+    transform: translateY(-5px);
+}
 
-/* MAP */
+/* COLORS */
+.available {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.booked {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+/* 💡 SUGGESTED */
+.suggested {
+    border: 3px solid yellow;
+    box-shadow: 0 0 20px yellow;
+}
+
+/* 🗺 MAP */
 #map {
     height: 300px;
     width: 90%;
-    margin: auto;
-    border-radius: 10px;
+    margin: 40px auto;
+    border-radius: 15px;
+    overflow: hidden;
 }
+
+/* 📱 MOBILE */
+@media (max-width: 600px) {
+    .dashboard {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .zone-slots {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
 </style>
+
 
 </head>
 
@@ -152,6 +206,7 @@ button {
 <!-- ZONES -->
 
 <div class="parking-zones">
+<h1 style="text-align:center;">🚗 Smart Parking Dashboard</h1>
 
 ```
 <div class="zone">
