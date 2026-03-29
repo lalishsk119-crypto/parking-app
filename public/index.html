@@ -1,92 +1,128 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Smart Parking System</title>
+    <title>Smart Parking</title>
 
     <style>
         body {
+            margin: 0;
             font-family: 'Segoe UI', sans-serif;
-            text-align: center;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
             color: white;
         }
 
-        h1 {
-            margin-top: 20px;
+        /* 🔥 NAVBAR */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 30px;
+            background: rgba(0,0,0,0.3);
         }
 
-        .top-bar {
-            margin-top: 10px;
+        .navbar h2 {
+            margin: 0;
         }
 
-        button {
-            padding: 8px 15px;
+        .logout {
+            background: red;
             border: none;
-            background: #ff4d4d;
+            padding: 8px 15px;
             color: white;
             border-radius: 5px;
             cursor: pointer;
         }
 
-        .stats-box {
-            margin: 20px;
-            font-size: 18px;
+        /* 📊 DASHBOARD */
+        .dashboard {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
         }
 
-        .parking-container {
+        .card {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            width: 150px;
+        }
+
+        /* 🚗 PARKING GRID */
+        .parking {
+            margin-top: 40px;
             display: grid;
             grid-template-columns: repeat(3, 140px);
             gap: 25px;
             justify-content: center;
-            margin-top: 30px;
         }
 
         .slot {
-            width: 140px;
             height: 140px;
             border-radius: 15px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            font-weight: bold;
+            align-items: center;
             cursor: pointer;
+            font-weight: bold;
             transition: 0.3s;
-        }
-
-        .available {
-            background: #28a745;
-        }
-
-        .booked {
-            background: #dc3545;
         }
 
         .slot:hover {
             transform: scale(1.1);
         }
 
+        .available {
+            background: linear-gradient(45deg, #00c853, #69f0ae);
+        }
+
+        .booked {
+            background: linear-gradient(45deg, #d50000, #ff5252);
+        }
+
+        /* 💡 SUGGESTED */
+        .suggested {
+            border: 3px solid yellow;
+        }
+
         .footer {
-            margin-top: 30px;
-            font-size: 14px;
-            opacity: 0.8;
+            text-align: center;
+            margin-top: 40px;
+            opacity: 0.7;
         }
     </style>
 </head>
 
 <body>
 
-<h1>🚗 Smart Parking System</h1>
-<h3>🚀 Features:
-Smart Suggestion | Billing | Live Timer</h3>
-
-<div class="top-bar">
-    <span id="userDisplay"></span>
-    <button onclick="logout()">Logout</button>
+<!-- 🔥 NAVBAR -->
+<div class="navbar">
+    <h2>🚗 Smart Parking</h2>
+    <div>
+        <span id="userDisplay"></span>
+        <button class="logout" onclick="logout()">Logout</button>
+    </div>
 </div>
 
-<div class="stats-box" id="stats">Loading...</div>
+<!-- 📊 DASHBOARD -->
+<div class="dashboard">
+    <div class="card">
+        <h3 id="total">0</h3>
+        <p>Total</p>
+    </div>
+    <div class="card">
+        <h3 id="available">0</h3>
+        <p>Available</p>
+    </div>
+    <div class="card">
+        <h3 id="booked">0</h3>
+        <p>Booked</p>
+    </div>
+</div>
 
-<div class="parking-container">
+<!-- 🚗 PARKING -->
+<div class="parking">
     <div class="slot" data-slot="A1">A1</div>
     <div class="slot" data-slot="A2">A2</div>
     <div class="slot" data-slot="A3">A3</div>
@@ -96,25 +132,25 @@ Smart Suggestion | Billing | Live Timer</h3>
 </div>
 
 <div class="footer">
-    ⚡ Auto Parking | Smart Booking | Real-time Slots
+    ⚡ AI Smart Parking System
 </div>
 
 <script>
-const user = localStorage.getItem("user");
+    const user = localStorage.getItem("user");
 
-if (!user) {
-    window.location.href = "/login.html";
-} else {
-    document.getElementById("userDisplay").innerText = "👤 " + user;
-}
+    if (!user) {
+        window.location.href = "/login.html";
+    } else {
+        document.getElementById("userDisplay").innerText = "👤 " + user;
+    }
 
-function logout() {
-    localStorage.removeItem("user");
-    window.location.href = "/login.html";
-}
+    function logout() {
+        localStorage.removeItem("user");
+        window.location.href = "/login.html";
+    }
 </script>
 
-<script src="script.js?v=99"></script>
+<script src="script.js?v=FINAL"></script>
 
 </body>
 </html>
