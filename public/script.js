@@ -1,13 +1,23 @@
 // 🧠 Smart Suggestion
 function suggestSlot(bookings) {
     const allSlots = [
-"A1","A2","A3","A4","A5",
-"B1","B2","B3","B4","B5",
-"C1","C2","C3","C4","C5"
-];
+        "A1","A2","A3","A4","A5",
+        "B1","B2","B3","B4","B5",
+        "C1","C2","C3","C4","C5"
+    ];
     const booked = bookings.map(b => b.slotNumber);
     const free = allSlots.filter(s => !booked.includes(s));
     return free.length ? free[0] : null;
+}
+
+// 🎯 Lucky Slot
+function luckySlot() {
+    const slots = [
+        "A1","A2","A3","A4","A5",
+        "B1","B2","B3","B4","B5",
+        "C1","C2","C3","C4","C5"
+    ];
+    return slots[Math.floor(Math.random() * slots.length)];
 }
 
 // 🔄 Load slots
@@ -22,50 +32,60 @@ async function loadSlots() {
         let bookedCount = 0;
 
         const suggested = suggestSlot(bookings);
+        const lucky = luckySlot();
 
         slots.forEach(slotDiv => {
             const slot = slotDiv.getAttribute("data-slot");
             const booking = bookings.find(b => b.slotNumber === slot);
 
-            // 🔄 RESET classes first
             slotDiv.classList.remove("available", "booked", "suggested");
 
             if (booking) {
-                // 🔴 BOOKED
                 slotDiv.classList.add("booked");
 
                 const now = new Date();
                 const minutes = Math.floor((now - new Date(booking.bookedAt)) / 60000);
 
-                slotDiv.innerText = `${slot}\n${booking.user}\n⏱ ${minutes} min`;
+                // 🎨 SLOT MOOD SYSTEM
+                if (minutes < 5) slotDiv.style.background = "#00c853";
+                else if (minutes < 15) slotDiv.style.background = "orange";
+                else slotDiv.style.background = "#d50000";
+
+                slotDiv.innerText = `${slot}\n${booking.user}\n🔥 ${minutes} min`;
 
                 slotDiv.onclick = () => cancelSlot(slot);
 
                 bookedCount++;
             } else {
-                // 🟢 AVAILABLE
+                slotDiv.style.background = ""; // reset
                 slotDiv.classList.add("available");
 
                 slotDiv.innerText = slot;
 
                 slotDiv.onclick = () => bookSlot(slot);
 
-                // 💡 HIGHLIGHT BEST SLOT
+                // 💡 Suggested slot
                 if (slot === suggested) {
                     slotDiv.classList.add("suggested");
+                }
+
+                // ⭐ Lucky slot
+                if (slot === lucky) {
+                    slotDiv.style.border = "4px solid gold";
+                    slotDiv.innerText += "\n⭐ Lucky";
                 }
             }
         });
 
         const available = total - bookedCount;
 
-        // 📊 UPDATE DASHBOARD (IMPORTANT)
+        // 📊 Dashboard
         document.getElementById("total").innerText = total;
         document.getElementById("available").innerText = available;
         document.getElementById("booked").innerText = bookedCount;
 
     } catch (error) {
-        console.log("Error loading slots:", error);
+        console.log("Error:", error);
     }
 }
 
@@ -79,46 +99,46 @@ async function bookSlot(slotNumber) {
         return;
     }
 
-    try {
-        const res = await fetch('/book-slot', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ slotNumber, user })
-        });
+    playSound();
 
-        const data = await res.json();
+    const res = await fetch('/book-slot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slotNumber, user })
+    });
 
-        alert(data.message);
+    const data = await res.json();
 
-        loadSlots();
-
-    } catch (error) {
-        console.log("Booking error:", error);
-    }
+    alert(data.message);
+    loadSlots();
 }
 
 // ❌ Cancel slot
 async function cancelSlot(slotNumber) {
     if (!confirm("Cancel booking?")) return;
 
-    try {
-        const res = await fetch(`/cancel-slot/${slotNumber}`, {
-            method: 'DELETE'
-        });
+    const res = await fetch(`/cancel-slot/${slotNumber}`, {
+        method: 'DELETE'
+    });
 
-        const data = await res.json();
+    const data = await res.json();
 
-        alert(data.message);
-
-        loadSlots();
-
-    } catch (error) {
-        console.log("Cancel error:", error);
-    }
+    alert(data.message);
+    loadSlots();
 }
 
-// 🔄 AUTO REFRESH (LIVE FEEL)
+// 🔊 Sound
+function playSound() {
+    document.getElementById("clickSound").play();
+}
+
+// ⏰ Clock
+setInterval(() => {
+    document.getElementById("clock").innerText =
+        new Date().toLocaleTimeString();
+}, 1000);
+
+// 🔄 Auto refresh
 setInterval(loadSlots, 5000);
 
-// 🚀 First load
 window.onload = loadSlots;
